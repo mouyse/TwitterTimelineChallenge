@@ -1,0 +1,12 @@
+body {
+  padding-top: 15%;	
+}
+.starter-template {
+  padding: 40px 15px;
+  text-align: center;  
+  margin-left:35%;
+}
+.icon-facebook {
+    background-image: url("img/facebook.jpg");
+    background-position: center center;
+}
