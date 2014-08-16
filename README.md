@@ -6,7 +6,7 @@ Demo link:
 
 http://shahinfosolutions.com/EW/TwitterTimelineChallenge/connect.php
 
-Libraries used with their links
+Libraries used
 ---------------------------------------------
 
 *Bootstrap (3.2.0) Link*
