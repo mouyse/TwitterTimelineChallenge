@@ -4,7 +4,7 @@ Twitter timeline challenge lets you login with your twitter account.You can view
 
 Demo link:
 
-http://shahinfosolutions.com/EW/TwitterTimelineChallenge/connect.php
+[Twitter Timeline Challenge](http://shahinfosolutions.com/EW/TwitterTimelineChallenge/connect.php)
 
 Libraries used
 ---------------------------------------------
