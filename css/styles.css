@@ -1,12 +1,41 @@
 body {
-  padding-top: 15%;	
+  padding-top: 5%;	
 }
 .starter-template {
   padding: 40px 15px;
   text-align: center;  
   margin-left:35%;
 }
-.icon-facebook {
-    background-image: url("img/facebook.jpg");
-    background-position: center center;
+.jumbotron{
+	padding: 40px 15px;
+  	text-align: center;  
+  	margin-left:0%;
+  	width:100%;	
+}
+.tweet_profile_pic_block{
+	margin-right:10px;
+}
+.tweet_content_blcok{
+	
+}
+section{
+	margin:0;
+	height:
+}
+#tweet_table{
+	margin-top:10px;
+	margin-left:5%;
+}
+.tweet_feed_image{
+	height:80px;
+	width:120px;
+}
+#user_follower_list{
+	padding-left:10px;
+}
+.thumbnail{
+	text-align: center;
+}
+.col-sm-6 col-md-4{
+	padding-top:10px;height:300px;width:20%;	
 }

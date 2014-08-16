@@ -103,28 +103,25 @@ $current_user_name=$user_info->name;
 
 <div class="jumbotron">
 	<h3 id="thumbnails-custom-content" style="text-align: left;">Latest Tweets from <?php echo $current_user_name."'s Home";?></h3>
-	<div id="dynamic_slider">  
-		<div class="slider-wrapper">
-			<div id="slider" style='height:100px;'>
-				<?php for($i=0;$i<10;$i++){?>
-				<div class="slide<?php echo ($i+1);?>" style='text-align:center;'>
-					<table id="tweet_table">
-						<tr>
-							<td>
-								<!-- <a href="http://twitter.com/<?php echo $home_timeline[$i]->user->screen_name;?>"><img src="<?php echo $home_timeline[$i]->user->profile_image_url;?>" class="tweet_feed_image"/></a> -->
-								<img src="<?php echo $home_timeline[$i]->user->profile_image_url;?>" class="tweet_feed_image"/>
-							</td>
-							<td style="padding-left:20px;">
-								<?php echo $home_timeline[$i]->text; ?>
-							</td>
-						</tr>
-					</table>
-				</div>            
-				<?php } ?>                   
-			</div>
-		  <div id="slider-direction-nav"></div>
-		  <div id="slider-control-nav"></div>
-		 </div>
+	<div class="slider-wrapper">
+		<div id="slider" style='height:100px;'>
+			<?php for($i=0;$i<10;$i++){?>
+			<div class="slide<?php echo ($i+1);?>" style='text-align:center;'>
+				<table id="tweet_table">
+					<tr>
+						<td>
+							<img src="<?php echo $home_timeline[$i]->user->profile_image_url;?>" class="tweet_feed_image"/>
+						</td>
+						<td style="padding-left:20px;">
+							<?php echo $home_timeline[$i]->text; ?>
+						</td>
+					</tr>
+				</table>
+			</div>            
+			<?php } ?>                   
+		</div>
+	  <div id="slider-direction-nav"></div>
+	  <div id="slider-control-nav"></div>
 	 </div>
 </div>
     <script type="text/javascript">
@@ -152,31 +149,8 @@ $current_user_name=$user_info->name;
 		    			crossDomain: true,
 		    			async: false,
 		    		   	success: function(msg){
-		    				//alert(msg);
-		    				$("#dynamic_slider").html("<div class='slider-wrapper'><div id='slider' style='height:100px;'></div><div id='slider-direction-nav'></div><div id='slider-control-nav'></div></div>");
-		    				$("#thumbnails-custom-content").html("Latest Tweets from "+ui.item.value+"'s Home");
-		    				var counter=0; 			
-		    				$.each(JSON.parse(msg), function(idx, obj) {
-			    				counter=counter+1;
-			    				if(counter == 11){return false;}
-			    				
-			    				//alert(JSON.stringify(obj, null, 4));
-			    				var imgUrl = obj.user.profile_image_url;
-			    				if((typeof obj.retweeted_status  != "undefined") && (typeof obj.retweeted_status.user  != "undefined") && (typeof obj.retweeted_status.user.profile_image_url  != "undefined") && obj.retweeted_status.user.profile_image_url != ''){
-			    					imgUrl = obj.retweeted_status.user.profile_image_url;
-				    			}
-			    					//$("#slider").append("<div class='slide"+counter+"' style='text-align:center;'><table id='tweet_table'><tr><td><img src='"+obj.retweeted_status.user.profile_image_url+"' class='tweet_feed_image'/></td><td style='padding-left:20px;'>"+obj.retweeted_status.text+"</td></tr></table></div>");
-			    				//}else{
-			    					$("#slider").append("<div class='slide"+counter+"' style='text-align:center;'><table id='tweet_table'><tr><td><img src='"+imgUrl+"' class='tweet_feed_image'/></td><td style='padding-left:20px;'>"+obj.text+"</td></tr></table></div>");
-			    				//}
-			    				//alert(obj.text + counter);		    					
-			    			});
-		    				//$("#slider-wrapper").append("<div id='slider-direction-nav'></div><div id='slider-control-nav'></div>");
-		    				//$("#slider-wrapper").append("<div id='slider-direction-nav'></div><div id='slider-control-nav'></div>");		    				
-		    				var slider = $('#slider').leanSlider({
-		    		            directionNav: '#slider-direction-nav',
-		    		            controlNav: '#slider-control-nav'
-		    		        });
+		    				alert(msg);		    			
+		    				$("div#dynamic_div").html(msg);
 		    			}
 		    		});
 			    	return false;
@@ -189,7 +163,7 @@ $current_user_name=$user_info->name;
 <div id="user_follower_list">
 	<h3 id="thumbnails-custom-content">Your Followers</h3>
 	<div class="ui-widget">
-		<label for="followers">Search & View your followers's Home: </label>
+		<label for="followers">Search your followers: </label>
 		<input id="followers">
 	</div>	
 	<div class="bs-example">
@@ -202,12 +176,12 @@ $current_user_name=$user_info->name;
 	    	  }
 	   	?>		
 		<?php for($j=0;$j<$follower_count;$j++){?>	
-			<div class="col-sm-6 col-md-4" style="padding-top:10px;height:300px;width:200px;">
+			<div class="col-sm-6 col-md-4">
 	    	    <div class="thumbnail">
 		          <img data-src="" src="<?php echo str_replace("_normal", "_bigger", $suggested_users_list->users[$j]->profile_image_url);?>" height="128px" width="100px" alt="Not available">
 		          <div class="caption">
 		            <h3><?php echo $suggested_users_list->users[$j]->name;?></h3>
-		            <p><a href="http://twitter.com/<?php echo $suggested_users_list->users[$j]->screen_name;?>" class="btn btn-primary" role="button">View Timeline</a></p>
+		            <p><a href="#" class="btn btn-primary" role="button">View Tweets</a> <a href="http://twitter.com/<?php echo $suggested_users_list->users[$j]->screen_name;?>" class="btn btn-default" role="button" target="_blank">View Timeline</a></p>
 		    	  </div>
 		       </div>
 	       </div>

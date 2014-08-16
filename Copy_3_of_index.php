@@ -162,7 +162,7 @@ $current_user_name=$user_info->name;
 			    				
 			    				//alert(JSON.stringify(obj, null, 4));
 			    				var imgUrl = obj.user.profile_image_url;
-			    				if((typeof obj.retweeted_status  != "undefined") && (typeof obj.retweeted_status.user  != "undefined") && (typeof obj.retweeted_status.user.profile_image_url  != "undefined") && obj.retweeted_status.user.profile_image_url != ''){
+			    				if((typeof obj.retweeted_status.user.profile_image_url  == "undefined") && obj.retweeted_status.user.profile_image_url != ''){
 			    					imgUrl = obj.retweeted_status.user.profile_image_url;
 				    			}
 			    					//$("#slider").append("<div class='slide"+counter+"' style='text-align:center;'><table id='tweet_table'><tr><td><img src='"+obj.retweeted_status.user.profile_image_url+"' class='tweet_feed_image'/></td><td style='padding-left:20px;'>"+obj.retweeted_status.text+"</td></tr></table></div>");

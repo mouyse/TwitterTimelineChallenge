@@ -153,7 +153,9 @@ $current_user_name=$user_info->name;
 		    			async: false,
 		    		   	success: function(msg){
 		    				//alert(msg);
-		    				$("#dynamic_slider").html("<div class='slider-wrapper'><div id='slider' style='height:100px;'></div><div id='slider-direction-nav'></div><div id='slider-control-nav'></div></div>");
+		    				$("#slider-wrapper").html("");		   
+		    				$("#slider").html("");		
+		    				$("#dynamic_slider").html("");
 		    				$("#thumbnails-custom-content").html("Latest Tweets from "+ui.item.value+"'s Home");
 		    				var counter=0; 			
 		    				$.each(JSON.parse(msg), function(idx, obj) {
@@ -161,13 +163,10 @@ $current_user_name=$user_info->name;
 			    				if(counter == 11){return false;}
 			    				
 			    				//alert(JSON.stringify(obj, null, 4));
-			    				var imgUrl = obj.user.profile_image_url;
-			    				if((typeof obj.retweeted_status  != "undefined") && (typeof obj.retweeted_status.user  != "undefined") && (typeof obj.retweeted_status.user.profile_image_url  != "undefined") && obj.retweeted_status.user.profile_image_url != ''){
-			    					imgUrl = obj.retweeted_status.user.profile_image_url;
-				    			}
+			    				//if(obj.retweeted_staus != ''){
 			    					//$("#slider").append("<div class='slide"+counter+"' style='text-align:center;'><table id='tweet_table'><tr><td><img src='"+obj.retweeted_status.user.profile_image_url+"' class='tweet_feed_image'/></td><td style='padding-left:20px;'>"+obj.retweeted_status.text+"</td></tr></table></div>");
 			    				//}else{
-			    					$("#slider").append("<div class='slide"+counter+"' style='text-align:center;'><table id='tweet_table'><tr><td><img src='"+imgUrl+"' class='tweet_feed_image'/></td><td style='padding-left:20px;'>"+obj.text+"</td></tr></table></div>");
+			    					$("#slider").append("<div class='slide"+counter+"' style='text-align:center;'><table id='tweet_table'><tr><td><img src='"+obj.user.profile_image_url+"' class='tweet_feed_image'/></td><td style='padding-left:20px;'>"+obj.text+"</td></tr></table></div>");
 			    				//}
 			    				//alert(obj.text + counter);		    					
 			    			});
