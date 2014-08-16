@@ -1,5 +1,6 @@
-TwitterTimelineChallenge
+Twitter Timeline Challenge
 =======================
+Twitter timeline challenge lets you login with your twitter account.You can view your followers and also their tweets by just typing their names inside the given textbox.
 
 Demo link:
 
