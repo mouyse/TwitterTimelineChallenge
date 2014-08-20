@@ -11,6 +11,7 @@ Libraries used
 
 *Bootstrap (3.2.0) Link*
 
+<<<<<<< HEAD
 [Bootstrip Website](http://getbootstrap.com/) 
 
 *jQuery Slider*
@@ -24,3 +25,11 @@ Libraries used
 *Encryption-Decryption Reference*
 
 [Encrypt-Decrypt](http://naveensnayak.wordpress.com/2013/03/12/simple-php-encrypt-and-decrypt/)
+=======
+http://getbootstrap.com/ 
+
+
+*jQuery Slider*
+
+http://dev7studios.com/lean-slider/
+>>>>>>> d92ecaa395f6895ce6889de9abfc6ccf882ad23c

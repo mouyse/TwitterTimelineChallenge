@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <?php
 session_start();
 require('lib/twitteroauth/twitteroauth/twitteroauth.php');
@@ -19,6 +20,9 @@ $user_info=$connection->get('account/verify_credentials');
 
 ?>
 <!DOCTYPE html>
+=======
+<?php session_start(); ?><!DOCTYPE html>
+>>>>>>> d92ecaa395f6895ce6889de9abfc6ccf882ad23c
 <html>
 <head>
 <title>Twitter Timeline Challenge</title>
@@ -52,6 +56,7 @@ $user_info=$connection->get('account/verify_credentials');
 <link rel="stylesheet" href="lib/LeanSlider/lean-slider.css" type="text/css" />
 <link rel="stylesheet" href="lib/LeanSlider/sample-styles.css" type="text/css" />
 
+<<<<<<< HEAD
 <script type="text/javascript">
     $(document).ready(function() {
         var slider = $('#slider').leanSlider({
@@ -61,13 +66,60 @@ $user_info=$connection->get('account/verify_credentials');
     });
 </script>
 
+=======
+>>>>>>> d92ecaa395f6895ce6889de9abfc6ccf882ad23c
 
 </head>
 
 <body>
+<<<<<<< HEAD
 <?php 
 $suggested_users_list=$connection->get('followers/list',array('count' => '200'));
 $current_user_name=$user_info->name;
+=======
+<?php
+require('lib/twitteroauth/twitteroauth/twitteroauth.php');
+require('twitterappconfig.php');
+
+if(empty($_SESSION['access_token']) || empty($_SESSION['access_token']['oauth_token']) || empty($_SESSION['access_token']['oauth_token_secret'])){
+	header("Location: clearsession.php");
+}
+
+$access_token=$_SESSION['access_token'];
+
+$connection=new TwitterOAuth(consumer, consumer_secret,$access_token['oauth_token'],$access_token['oauth_token_secret']);
+
+$home_timeline=$connection->get('statuses/home_timeline',array('include_rts' => 'true'));
+$user_info=$connection->get('account/verify_credentials');
+/*$suggested_users_category=$connection->get('users/suggestions');
+$upper_limit=count($suggested_users_category);
+//echo "upper limit: ".$upper_limit;
+$random_category_no=rand(0,$upper_limit);
+//echo "random category: ".$random_category;
+//echo "Random Slug:".$suggested_users[$random_category]->slug;
+//echo "Random CAte".$rand_user_category;
+$random_slug=$suggested_users_category[$random_category_no]->slug;
+//echo "<br />";
+//print_r($random_slug);
+//echo "<br />";
+$random_slug='users/suggesstion/'.$random_slug.'/members';*/
+//echo "Random Slug: ".$random_slug;
+$suggested_users_list=$connection->get('followers/list');
+//echo "<pre>".print_r($suggested_users_list)."</pre>";
+//$suggested_users[rand(0,count($suggested_users))])
+$current_user_name=$user_info->name;
+//$autocomplete_user_tweet=$connection->get('statuses/user_timeline',array('include_rts' => 'true','screen_name' => 'mouyse'));
+//echo "<pre>";
+//print_r($autocomplete_user_tweet);
+//echo "</pre>";
+
+//$suggested_users_list=$suggested_users_list['users'];
+//echo "<pre>";
+//print_r($suggested_users_list->users[0]->screen_name);
+//echo "</pre>";
+//echo "<pre>".print_r($home_timeline,true)."</pre>";
+//echo "<pre>".print_r($user_info,true)."</pre>";
+>>>>>>> d92ecaa395f6895ce6889de9abfc6ccf882ad23c
 ?>
 
 <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
@@ -86,6 +138,7 @@ $current_user_name=$user_info->name;
 </div>
 
 <div class="jumbotron">
+<<<<<<< HEAD
  <h1>Hello, <?php echo ucfirst($user_info->name);?></h1>
  <p></p>
  <p>
@@ -101,6 +154,13 @@ $current_user_name=$user_info->name;
  	</p>
  </p>
 </div>
+=======
+ <h1>Hello, <?php echo $user_info->name;?></h1>
+ <p></p>
+ <p><a href="http://twitter.com/<?php echo $user_info->screen_name; ?>" class="btn btn-primary btn-lg" target="_blank" role="button">View Your Twitter &raquo;</a></p>
+</div>
+
+>>>>>>> d92ecaa395f6895ce6889de9abfc6ccf882ad23c
 <div class="jumbotron">
 	<h3 id="thumbnails-custom-content" style="text-align: left;">Latest Tweets from <?php echo $current_user_name."'s Home";?></h3>
 	<div id="dynamic_slider">  
@@ -127,6 +187,7 @@ $current_user_name=$user_info->name;
 		 </div>
 	 </div>
 </div>
+<<<<<<< HEAD
 
  	 <script>
 $(function() {
@@ -186,6 +247,73 @@ var availableFollowers = [
 	  <input type="text" class="form-control" placeholder="Search & View your follower's Home:" id="followers">
 	</div>
 		
+=======
+    <script type="text/javascript">
+    $(document).ready(function() {
+        var slider = $('#slider').leanSlider({
+            directionNav: '#slider-direction-nav',
+            controlNav: '#slider-control-nav'
+        });
+    });
+    </script>
+ 	 <script>
+		$(function() {
+		var availableFollowers = [
+			<?php for($uc=0;$uc<count($suggested_users_list->users);$uc++){?>
+			<?php echo '{ value: "'.$suggested_users_list->users[$uc]->name.'",label: "'.$suggested_users_list->users[$uc]->name.'",screen_name: "'.$suggested_users_list->users[$uc]->screen_name.'"},';?>
+			<?php } ?>
+			];
+			$( "#followers" ).autocomplete({
+				source: availableFollowers,
+			    select:function(e,ui) {			    	
+		    		$.ajax({
+		    			url: "http://shahinfosolutions.com/EW/TwitterTimelineChallenge/process.php", 				//This is the page where you will handle your SQL insert
+		    			data: "selected_follower="+ui.item.screen_name,
+		    			type: "POST",
+		    			crossDomain: true,
+		    			async: false,
+		    		   	success: function(msg){
+		    				//alert(msg);
+		    				$("#dynamic_slider").html("<div class='slider-wrapper'><div id='slider' style='height:100px;'></div><div id='slider-direction-nav'></div><div id='slider-control-nav'></div></div>");
+		    				$("#thumbnails-custom-content").html("Latest Tweets from "+ui.item.value+"'s Home");
+		    				var counter=0; 			
+		    				$.each(JSON.parse(msg), function(idx, obj) {
+			    				counter=counter+1;
+			    				if(counter == 11){return false;}
+			    				
+			    				//alert(JSON.stringify(obj, null, 4));
+			    				var imgUrl = obj.user.profile_image_url;
+			    				if((typeof obj.retweeted_status  != "undefined") && (typeof obj.retweeted_status.user  != "undefined") && (typeof obj.retweeted_status.user.profile_image_url  != "undefined") && obj.retweeted_status.user.profile_image_url != ''){
+			    					imgUrl = obj.retweeted_status.user.profile_image_url;
+				    			}
+			    					//$("#slider").append("<div class='slide"+counter+"' style='text-align:center;'><table id='tweet_table'><tr><td><img src='"+obj.retweeted_status.user.profile_image_url+"' class='tweet_feed_image'/></td><td style='padding-left:20px;'>"+obj.retweeted_status.text+"</td></tr></table></div>");
+			    				//}else{
+			    					$("#slider").append("<div class='slide"+counter+"' style='text-align:center;'><table id='tweet_table'><tr><td><img src='"+imgUrl+"' class='tweet_feed_image'/></td><td style='padding-left:20px;'>"+obj.text+"</td></tr></table></div>");
+			    				//}
+			    				//alert(obj.text + counter);		    					
+			    			});
+		    				//$("#slider-wrapper").append("<div id='slider-direction-nav'></div><div id='slider-control-nav'></div>");
+		    				//$("#slider-wrapper").append("<div id='slider-direction-nav'></div><div id='slider-control-nav'></div>");		    				
+		    				var slider = $('#slider').leanSlider({
+		    		            directionNav: '#slider-direction-nav',
+		    		            controlNav: '#slider-control-nav'
+		    		        });
+		    			}
+		    		});
+			    	return false;
+				     
+			    }
+			});
+			
+		});
+	</script>
+<div id="user_follower_list">
+	<h3 id="thumbnails-custom-content">Your Followers</h3>
+	<div class="ui-widget">
+		<label for="followers">Search & View your followers's Home: </label>
+		<input id="followers">
+	</div>	
+>>>>>>> d92ecaa395f6895ce6889de9abfc6ccf882ad23c
 	<div class="bs-example">
 	    <div class="row">
 	    <?php 
@@ -201,7 +329,11 @@ var availableFollowers = [
 		          <img data-src="" src="<?php echo str_replace("_normal", "_bigger", $suggested_users_list->users[$j]->profile_image_url);?>" height="128px" width="100px" alt="Not available">
 		          <div class="caption">
 		            <h3><?php echo $suggested_users_list->users[$j]->name;?></h3>
+<<<<<<< HEAD
 		            <p><a href="http://twitter.com/<?php echo $suggested_users_list->users[$j]->screen_name;?>" class="btn btn-primary" role="button" target="_blank">View Timeline</a></p>
+=======
+		            <p><a href="http://twitter.com/<?php echo $suggested_users_list->users[$j]->screen_name;?>" class="btn btn-primary" role="button">View Timeline</a></p>
+>>>>>>> d92ecaa395f6895ce6889de9abfc6ccf882ad23c
 		    	  </div>
 		       </div>
 	       </div>
