@@ -1,5 +1,4 @@
 <?php
-<<<<<<< HEAD
 session_start();
 error_reporting(0);
 // Include the main TCPDF library (search for installation path).
@@ -13,15 +12,10 @@ require_once('twitterappconfig.php');
 //Including functions file which are mendatory 
 require_once('required_functions.php');
 
-=======
-require('lib/twitteroauth/twitteroauth/twitteroauth.php');
-require('twitterappconfig.php');
->>>>>>> d92ecaa395f6895ce6889de9abfc6ccf882ad23c
 $access_token=$_SESSION['access_token'];
 $connection=new TwitterOAuth(consumer, consumer_secret,$access_token['oauth_token'],$access_token['oauth_token_secret']);
 
 if(isset($_POST['selected_follower'])){
-<<<<<<< HEAD
 	
 	/*****************************
 	 *	  GETTING A TWEETS       *
@@ -263,13 +257,5 @@ if(isset($_POST['selected_follower'])){
 	print($xml->asXML());
 
 }
-=======
-	$_SESSION['selected_follower']=$_POST['selected_follower'];
-	//echo $_POST['selected_follower'];
-}
-$val=$connection->get('statuses/user_timeline',array('include_rts' => 'true','screen_name' => $_POST['selected_follower']));
-//echo "<pre>".print_r($val)."</pre>";
-echo json_encode($val);
->>>>>>> d92ecaa395f6895ce6889de9abfc6ccf882ad23c
 
 ?>
