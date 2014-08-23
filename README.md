@@ -1,14 +1,14 @@
 Twitter Timeline Challenge
 =======================
--Twitter timeline challenge lets you login with your twitter account.You can view your followers and also their tweets by just typing their names inside the given textbox.
--You can also download your all tweets in Following formats.
-	*PDF
-	*JSON
-	*CSV
-	*XLS
-	*XML
-	*Google Spreadsheet
--You can also mail PDF Version of your all tweets to Any Email ID. 
+* Twitter timeline challenge lets you login with your twitter account.You can view your followers and also their tweets by just typing their names inside the given textbox.
+* You can also download your all tweets in Following formats.
+	..*PDF
+	..*JSON
+	..*CSV
+	..*XLS
+	..*XML
+	..*Google Spreadsheet
+* You can also mail PDF Version of your all tweets to Any Email ID. 
 
 Demo link:
 
