@@ -1,17 +1,4 @@
 <?php
-//http://www.phpro.org/examples/Convert-Object-To-Array-With-PHP.html
-function objectToArray( $object )
-{
-	if( !is_object( $object ) && !is_array( $object ) )
-	{
-		return $object;
-	}
-	if( is_object( $object ) )
-	{
-		$object = get_object_vars( $object );
-	}
-	return array_map( 'objectToArray', $object );
-}
 //http://naveensnayak.wordpress.com/2013/03/12/simple-php-encrypt-and-decrypt/
 function encryptDecrypt($action, $string) {
 	$output = false;
@@ -37,6 +24,7 @@ function encryptDecrypt($action, $string) {
 	return $output;
 }
 function getAllTweets(){
+	
 	$access_token=$_SESSION['access_token'];
 	$connection=new TwitterOAuth(consumer, consumer_secret,$access_token['oauth_token'],$access_token['oauth_token_secret']);
 	

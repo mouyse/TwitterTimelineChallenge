@@ -1,7 +1,8 @@
 <?php
 session_start();
+ob_start();
 error_reporting(0);
-// Include the main TCPDF library (search for installation path).
+@ini_set('display_errors', 0);// Include the main TCPDF library (search for installation path).
 require_once('lib/tcpdf/tcpdf.php');
 require_once('lib/tcpdf/examples/tcpdf_include.php');
 
@@ -12,8 +13,13 @@ require_once('twitterappconfig.php');
 //Including functions file which are mendatory 
 require_once('required_functions.php');
 
+//Google API Client PHP
+require_once 'lib/google-api-php-client/src/Google/Client.php';
+require_once 'lib/google-api-php-client/src/Google/Service/Drive.php';
+
 $access_token=$_SESSION['access_token'];
 $connection=new TwitterOAuth(consumer, consumer_secret,$access_token['oauth_token'],$access_token['oauth_token_secret']);
+
 
 if(isset($_POST['selected_follower'])){
 	
@@ -108,7 +114,7 @@ if(isset($_POST['selected_follower'])){
 	// ---------------------------------------------------------
 	
 	//Close and output PDF document
-	$pdf->Output(ucfirst(encryptDecrypt('decrypt',$_GET['p'])).'.pdf', 'I');
+	$pdf->Output(ucfirst(encryptDecrypt('decrypt',$_GET['p'])).'.pdf', 'I');	
 	
 }else if(isset($_GET['j'])){
 	
@@ -256,6 +262,200 @@ if(isset($_POST['selected_follower'])){
 	
 	print($xml->asXML());
 
-}
+}else if(isset($_GET['g']) || isset($_GET['code'])){
+	
+	/****************************
+	 *	  GOOGLE SPREADSHEET    *
+	****************************/
+	
+	$client = new Google_Client();
+	// Get your credentials from the console
+	$client->setClientId('498228011634-n4gvg5ir0sqmv38o9g49f933b8a9obvn.apps.googleusercontent.com');
+	$client->setClientSecret('LepNeOgmpUz5oaOzAGwCYnon');
+	$client->setRedirectUri('http://shahinfosolutions.com/EW/TwitterTimelineChallenge/process.php');
+	$client->setScopes(array('https://www.googleapis.com/auth/drive'));
+	
+	$service = new Google_Service_Drive($client);
+	
+	try{		
+		if (isset($_GET['code'])) {
+			//echo "Code: ".$_GET['code'];exit();
+			$client->authenticate($_GET['code']);		
+			$_SESSION['oauth_accessToken'] = $client->getAccessToken();			
+		}
+			
+		if (isset($_SESSION['oauth_accessToken']) && $_SESSION['oauth_accessToken']) {
+			//echo "Access Token in Session : ".print_r($_SESSION);			
+			//$client->setAccessToken($_SESSION['access_token']);
+			if ($client->isAccessTokenExpired()) {
+				//echo "Session expired";				
+				unset($_SESSION['oauth_accessToken']);
+			}else{
+				//echo "Session not expired";
+			}
+			//exit();
+		}else {
+			$authUrl = $client->createAuthUrl();
+			header("Location: ".$authUrl);
+		}
+		
+		if($client->getAccessToken()){
 
+			/****************************
+			 *	  CSV FILE CREATION    *
+			****************************/
+			
+			//Calling a function to get all tweets
+			$val=getAllTweets();
+			
+			$file = fopen('GoogleSpreadsheetUploads/uploads.csv', 'w');			
+			
+			//Writing first row as a Header
+			fputcsv($file, array('created_at','tweet'),",");
+			
+			//Iterating through an array "$var" to write all tweets row by row
+			for($csv_counter=0;$csv_counter<count($val);$csv_counter++){
+				fputcsv($file, array($val[$csv_counter]->created_at,$val[$csv_counter]->text),",");
+			}
+			
+			fseek($file, 0);
+			
+			/***************
+			 * CSV CREATED *
+			***************/
+			
+			$mimeType='text/csv';
+			
+			$mimeType = preg_replace('/;.*/','',$mimeType);
+			
+			//Insert a file
+			$file = new Google_Service_Drive_DriveFile();
+			$file->setTitle('GoogleSpreadsheet');
+			$file->setDescription('A list of all tweets');
+			$file->setMimeType($mimeType);
+			
+			$data = file_get_contents('GoogleSpreadsheetUploads/uploads.csv');
+			
+			$createdFile = $service->files->insert(
+					$file,
+					array(
+							'data' => $data,
+							'mimeType' => $mimeType,
+							'convert' => true,
+							'uploadType' => 'media'
+					)
+			);
+			echo "<script type='text/javascript'>alert('Google Spreadsheet has been updated successfully. Check your Google Drive!');</script>";
+			echo "<script>window.close();</script>";
+			exit();
+				
+		}
+	}catch(Exception $ex){
+		echo $ex;
+	}
+}else if(isset($_POST['email'])){
+		
+	/****************************
+	 *	  PDF FILE CREATION    *
+	****************************/
+	
+	//Calling a function to get all tweets
+	$val=getAllTweets();
+	
+	// Include the main TCPDF library (search for installation path).	
+	require_once('lib/tcpdf/examples/tcpdf_include.php');
+	require_once('lib/tcpdf/tcpdf.php');	
+	
+	// create new PDF document
+	$pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
+	
+	// set document information
+	$pdf->SetAuthor('Jay Shah');
+	$pdf->SetTitle('All Tweets of '.ucfirst(encryptDecrypt('decrypt',$_GET['p'])));
+	
+	// set default header data
+	$pdf->SetHeaderData(PDF_HEADER_LOGO, PDF_HEADER_LOGO_WIDTH, ucfirst(encryptDecrypt('decrypt', $_GET['p']))."'s All Tweets", "by: Jay Shah");
+	
+	// set header and footer fonts
+	$pdf->setHeaderFont(Array(PDF_FONT_NAME_MAIN, '', PDF_FONT_SIZE_MAIN));
+	$pdf->setFooterFont(Array(PDF_FONT_NAME_DATA, '', PDF_FONT_SIZE_DATA));
+	
+	// set default monospaced font
+	$pdf->SetDefaultMonospacedFont(PDF_FONT_MONOSPACED);
+	
+	// set margins
+	$pdf->SetMargins(PDF_MARGIN_LEFT, PDF_MARGIN_TOP, PDF_MARGIN_RIGHT);
+	$pdf->SetHeaderMargin(PDF_MARGIN_HEADER);
+	$pdf->SetFooterMargin(PDF_MARGIN_FOOTER);
+	
+	// set auto page breaks
+	$pdf->SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM);
+	
+	// set image scale factor
+	$pdf->setImageScale(PDF_IMAGE_SCALE_RATIO);
+	
+	// set some language-dependent strings (optional)
+	if (@file_exists(dirname(__FILE__).'/lang/eng.php')) {
+		require_once(dirname(__FILE__).'/lang/eng.php');
+		$pdf->setLanguageArray($l);
+	}
+	
+	// add a page
+	$pdf->AddPage();
+	
+	// create some HTML content
+	$html='<table>';
+	$html.='<tr>';
+	$html.='<th>When did you tweet ? </th>';
+	$html.='<th>What did you tweet ? </th>';
+	//$html.='<th>How many retweeted ? </th>';
+	//$html.='<th>How many marked it as Favorite ? </th>';
+	$html.='</tr>';
+	for($tweets_counter=0;$tweets_counter<count($val);$tweets_counter++){
+		$html.="<tr>";
+		$html.="<td>".$val[$tweets_counter]->created_at."</td>";
+		$html.="<td>".$val[$tweets_counter]->text."</td>";
+		//$html.="<td align='right'>".(empty($val[$tweets_counter]->retweeted))?'You got duck number of retweets for this tweet. :D ':$val[$tweets_counter]->retweet."</td>";
+		//$html.="<td align='right'>".(empty($val[$tweets_counter]->favorited))?'Oops! Looks like no one has favorited this tweet.':$val[$tweets_counter]->favorited."</td>";
+		$html.="</tr>";
+	}
+	$html.='</table>';
+	
+	// output the HTML content
+	$pdf->writeHTML($html, true, false, true, false, '');
+	
+	
+	// reset pointer to the last page
+	$pdf->lastPage();
+	
+	// ---------------------------------------------------------
+	
+	//Close and output PDF document
+	$pdf->Output('EmailAttachments/Tweets.pdf', 'F');	
+	//exit();
+	
+	require_once('lib/PHPMailer/class.phpmailer.php');
+	$email = new PHPMailer();
+	$email->From      = 'johnson.shah@gmail.com';
+	$email->FromName  = 'Jay Shah';
+	$email->Subject   = 'Tweets in PDF Version';
+	$email->Body      = "Please download your tweets in PDF file which has been attached in this Mail. Thank you!";
+	//$email->Body     .= "<a href=''Do Visit us";
+	$email->AddAddress( $_POST['email'] );
+	
+	$file_to_attach = 'EmailAttachments/Tweets.pdf';
+	
+	$email->AddAttachment( $file_to_attach , 'Tweets.pdf' );
+	
+	if(!$email->Send()) {
+		echo "<script type='text/javascript'>alert('Error occured while sending an email! Please try again.);</script>";
+	} else {
+		echo "<script type='text/javascript'>alert('Mail has been sent successfully');</script>";
+	}	
+	echo "<script>window.close();</script>";
+	exit();
+}else{
+	header("Location: connect.php");
+	exit();
+}
 ?>

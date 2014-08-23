@@ -1,20 +1,29 @@
 <?php
 session_start();
+ob_start();
+error_reporting(0);
+@ini_set('display_errors', 0);
+
+//Including Twitter library
 require('lib/twitteroauth/twitteroauth/twitteroauth.php');
 require('twitterappconfig.php');
+
 //Including functions file which are mendatory
 require_once('required_functions.php');
 
+//Check if access_token is actually verified
 if(empty($_SESSION['access_token']) || empty($_SESSION['access_token']['oauth_token']) || empty($_SESSION['access_token']['oauth_token_secret'])){
 	header("Location: clearsession.php");
 }
 
+//Creating access_token variable
 $access_token=$_SESSION['access_token'];
 $connection=new TwitterOAuth(consumer, consumer_secret,$access_token['oauth_token'],$access_token['oauth_token_secret']);
 
-//Fetching Home Timeline of currently logged in user
+//Making an API Call to fetch Home Timeline of currently logged in user
 $home_timeline=$connection->get('statuses/home_timeline',array('include_rts' => 'true'));
-//Fetching Account information of Currently logged in user
+
+//Making an API Call to fetch Account information of Currently logged in user
 $user_info=$connection->get('account/verify_credentials');
 
 ?>
@@ -90,19 +99,40 @@ $current_user_name=$user_info->name;
  <p></p>
  <p>
  	<a href="http://twitter.com/<?php echo $user_info->screen_name; ?>" class="btn btn-primary btn-lg" target="_blank" role="button"><span class="glyphicon glyphicon-user"></span> View My Twitter &raquo;</a>
- 	<p>
- 		
- 		<span class="label label-danger">Download My All Tweets &raquo;</span> 
+ </p>
+ 	<div class="panel panel-primary">
+      <div class="panel-heading">
+        <h3 class="panel-title">Download My All Tweets &raquo;</h3>
+      </div>
+      <div class="panel-body">
+        
  		<a href="process.php?p=<?php echo encryptDecrypt('encrypt',$user_info->screen_name);?>" class="btn btn-primary btn-lg" role="button" target="_blank">PDF</a>
  		<a href="process.php?j=<?php echo encryptDecrypt('encrypt',$user_info->screen_name);?>" class="btn btn-primary btn-lg" role="button" target="_blank">JSON</a>
  		<a href="process.php?c=<?php echo encryptDecrypt('encrypt',$user_info->screen_name);?>" class="btn btn-primary btn-lg" role="button" target="_blank">CSV</a>
  		<a href="process.php?e=<?php echo encryptDecrypt('encrypt',$user_info->screen_name);?>" class="btn btn-primary btn-lg" role="button" target="_blank">XLS</a>
  		<a href="process.php?x=<?php echo encryptDecrypt('encrypt',$user_info->screen_name);?>" class="btn btn-primary btn-lg" role="button" target="_blank">XML</a>
- 	</p>
- </p>
+ 		<a href="process.php?g=<?php echo encryptDecrypt('encrypt',$user_info->screen_name);?>" class="btn btn-primary btn-lg" role="button" target="_blank">Google Spreadsheet</a>
+      </div>
+    </div>
+    <form method="POST" action="process.php" target="_blank">
+	 	<div class="panel panel-primary">
+	      <div class="panel-heading">
+	        <h3 class="panel-title">Email My All Tweets &raquo;</h3>
+	      </div>
+	      <div class="panel-body">
+	      	<div class="input-group">
+			  <span class="input-group-addon">@</span>
+			  <input type="email" class="form-control" placeholder="Email" required="required" id="email" name="email">
+			</div>
+			<br />
+	        <button type="submit" class="btn btn-primary" >Mail Me PDF </button>
+	      </div>
+	    </div>
+    </form>
+ 
 </div>
 <div class="jumbotron">
-	<h3 id="thumbnails-custom-content" style="text-align: left;">Latest Tweets from <?php echo $current_user_name."'s Home";?></h3>
+	<h3 id="thumbnails-custom-content" style="text-align: left;">Latest Tweets from <?php echo $current_user_name."'s ";?><span class="glyphicon glyphicon-home"></span> </h3>
 	<div id="dynamic_slider">  
 		<div class="slider-wrapper">
 			<div id="slider" style='height:100px;'>
