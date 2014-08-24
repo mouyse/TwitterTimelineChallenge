@@ -225,12 +225,16 @@ var availableFollowers = [
 	    	  	$follower_count=count($suggested_users_list->users);
 	    	  }
 	   	?>		
+		<!-- Iterating through an array to display 10 or less followers -->
 		<?php for($j=0;$j<$follower_count;$j++){?>	
 			<div class="col-sm-6 col-md-4" style="padding-top:10px;height:300px;width:200px;">
 	    	    <div class="thumbnail">
+				<!-- Displaying Image -->
 		          <img data-src="" src="<?php echo str_replace("_normal", "_bigger", $suggested_users_list->users[$j]->profile_image_url);?>" height="128px" width="100px" alt="Not available">
 		          <div class="caption">
+				  <!-- Displaying User's Actual Name -->
 		            <h3><?php echo $suggested_users_list->users[$j]->name;?></h3>
+					<!-- Displaying A Link to User's Timeline -->
 		            <p><a href="http://twitter.com/<?php echo $suggested_users_list->users[$j]->screen_name;?>" class="btn btn-primary" role="button" target="_blank">View Timeline</a></p>
 		    	  </div>
 		       </div>
