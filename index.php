@@ -175,27 +175,26 @@ var availableFollowers = [
     			crossDomain: true,
     			async: false,
     		   	success: function(msg){
-    				//alert(msg);
+    				//Replacing whole div with a new div
     				$("#dynamic_slider").html("<div class='slider-wrapper'><div id='slider' style='height:100px;'></div><div id='slider-direction-nav'></div><div id='slider-control-nav'></div></div>");
     				$("#thumbnails-custom-content").html("Latest Tweets from "+ui.item.value+"'s Home");
+    				//Initializing counter variable to 0
     				var counter=0; 			
     				$.each(JSON.parse(msg), function(idx, obj) {
+        				//Incrementing counter by 1
 	    				counter=counter+1;
+	    				//Stopping the loop As we only need to have 10 tweets
 	    				if(counter == 11){return false;}
-	    				
-	    				//alert(JSON.stringify(obj, null, 4));
+	    				//Setting up imgUrl to profile_image_url at first
 	    				var imgUrl = obj.user.profile_image_url;
+	    				//Replacing imgUrl with new URL if and only if the current tweet was acutually retweeted.
 	    				if((typeof obj.retweeted_status  != "undefined") && (typeof obj.retweeted_status.user  != "undefined") && (typeof obj.retweeted_status.user.profile_image_url  != "undefined") && obj.retweeted_status.user.profile_image_url != ''){
 	    					imgUrl = obj.retweeted_status.user.profile_image_url;
 		    			}
-	    					//$("#slider").append("<div class='slide"+counter+"' style='text-align:center;'><table id='tweet_table'><tr><td><img src='"+obj.retweeted_status.user.profile_image_url+"' class='tweet_feed_image'/></td><td style='padding-left:20px;'>"+obj.retweeted_status.text+"</td></tr></table></div>");
-	    				//}else{
-	    					$("#slider").append("<div class='slide"+counter+"' style='text-align:center;'><table id='tweet_table'><tr><td><img src='"+imgUrl+"' class='tweet_feed_image'/></td><td style='padding-left:20px;'>"+obj.text+"</td></tr></table></div>");
-	    				//}
-	    				//alert(obj.text + counter);		    					
-	    			});
-    				//$("#slider-wrapper").append("<div id='slider-direction-nav'></div><div id='slider-control-nav'></div>");
-    				//$("#slider-wrapper").append("<div id='slider-direction-nav'></div><div id='slider-control-nav'></div>");		    				
+		    			//Adding a new slide
+	    				$("#slider").append("<div class='slide"+counter+"' style='text-align:center;'><table id='tweet_table'><tr><td><img src='"+imgUrl+"' class='tweet_feed_image'/></td><td style='padding-left:20px;'>"+obj.text+"</td></tr></table></div>");		    					
+	    			});		    				
+	    			//Adding new controls to navigate
     				var slider = $('#slider').leanSlider({
     		            directionNav: '#slider-direction-nav',
     		            controlNav: '#slider-control-nav'
@@ -219,6 +218,7 @@ var availableFollowers = [
 	<div class="bs-example">
 	    <div class="row">
 	    <?php 
+	    	  //Initializing follower_count to 10 or below 
 	    	  if(count($suggested_users_list->users)>10){
 	    		$follower_count=10;
 	    	  }else{
