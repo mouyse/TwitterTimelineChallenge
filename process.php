@@ -2,7 +2,8 @@
 session_start();
 ob_start();
 error_reporting(0);
-@ini_set('display_errors', 0);// Include the main TCPDF library (search for installation path).
+@ini_set('display_errors', 0);
+// Include the main TCPDF library (search for installation path).
 require_once('lib/tcpdf/tcpdf.php');
 require_once('lib/tcpdf/examples/tcpdf_include.php');
 
@@ -19,7 +20,6 @@ require_once 'lib/google-api-php-client/src/Google/Service/Drive.php';
 
 $access_token=$_SESSION['access_token'];
 $connection=new TwitterOAuth(consumer, consumer_secret,$access_token['oauth_token'],$access_token['oauth_token_secret']);
-
 
 if(isset($_POST['selected_follower'])){
 	
@@ -263,7 +263,8 @@ if(isset($_POST['selected_follower'])){
 	print($xml->asXML());
 
 }else if(isset($_GET['g']) || isset($_GET['code'])){
-	
+
+	echo "<img src='img/loader.gif' />";
 	/****************************
 	 *	  GOOGLE SPREADSHEET    *
 	****************************/
@@ -315,6 +316,7 @@ if(isset($_POST['selected_follower'])){
 			
 			//Iterating through an array "$var" to write all tweets row by row
 			for($csv_counter=0;$csv_counter<count($val);$csv_counter++){
+				echo "<br />Processing ".($tweets_counter+1)." of ".count($val)." Tweets... ";
 				fputcsv($file, array($val[$csv_counter]->created_at,$val[$csv_counter]->text),",");
 			}
 			
@@ -354,11 +356,10 @@ if(isset($_POST['selected_follower'])){
 		echo $ex;
 	}
 }else if(isset($_POST['email'])){
-		
+	echo "<img src='img/loader.gif' />";
 	/****************************
 	 *	  PDF FILE CREATION    *
 	****************************/
-	
 	//Calling a function to get all tweets
 	$val=getAllTweets();
 	
@@ -412,6 +413,7 @@ if(isset($_POST['selected_follower'])){
 	//$html.='<th>How many marked it as Favorite ? </th>';
 	$html.='</tr>';
 	for($tweets_counter=0;$tweets_counter<count($val);$tweets_counter++){
+		echo "<br />Processing ".($tweets_counter+1)." of ".count($val)." Tweets... ";
 		$html.="<tr>";
 		$html.="<td>".$val[$tweets_counter]->created_at."</td>";
 		$html.="<td>".$val[$tweets_counter]->text."</td>";

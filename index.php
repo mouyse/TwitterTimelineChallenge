@@ -3,7 +3,6 @@ session_start();
 ob_start();
 error_reporting(0);
 @ini_set('display_errors', 0);
-
 //Including Twitter library
 require('lib/twitteroauth/twitteroauth/twitteroauth.php');
 require('twitterappconfig.php');
@@ -91,9 +90,19 @@ $current_user_name=$user_info->name;
 	  <a class="navbar-brand" href="#">Twitter Timeline Challenge</a>
 	</div>
 	
+<?php 
+	if(!empty($_SESSION['access_token']) && !empty($_SESSION['access_token']['oauth_token']) && !empty($_SESSION['access_token']['oauth_token_secret'])){
+?>
+	<div class="collapse navbar-collapse">
+	  <ul class="nav navbar-nav">
+		<li class="active">
+			<a href="clearsession.php" >Logout</a>
+		</li>
+	  </ul>
+	</div><!--/.nav-collapse -->
+<?php }?>
   </div>
 </div>
-
 <div class="jumbotron">
  <h1>Hello, <?php echo ucfirst($user_info->name);?></h1>
  <p></p>

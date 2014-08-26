@@ -1,3 +1,14 @@
+<?php
+session_start();
+ob_start();
+error_reporting(0);
+@ini_set('display_errors', 0);
+
+//Check if access_token is actually verified
+if(!empty($_SESSION['access_token']) && !empty($_SESSION['access_token']['oauth_token']) && !empty($_SESSION['access_token']['oauth_token_secret'])){
+	header("Location: index.php");
+} 
+?>
 <!DOCTYPE html>
 <html>
 <head>

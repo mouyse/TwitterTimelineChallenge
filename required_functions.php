@@ -23,8 +23,20 @@ function encryptDecrypt($action, $string) {
 
 	return $output;
 }
-function getAllTweets(){
+function getAllTweets(){	
 	
+	$cache = FALSE; //Assume the cache is empty
+	$cPath = 'cache/tweets.cache';
+	if(file_exists($cPath)) {
+		$modtime = filemtime($cPath);
+		$timeago = time() - 1800; //30 minutes ago in Unix timestamp format
+		if($modtime < $timeago) {
+			$cache = FALSE; //Set to false just in case as the cache needs to be renewed
+		} else {
+			$cache = TRUE; //The cache is not too old so the cache can be used.
+		}
+	}
+		
 	$access_token=$_SESSION['access_token'];
 	$connection=new TwitterOAuth(consumer, consumer_secret,$access_token['oauth_token'],$access_token['oauth_token_secret']);
 	
@@ -34,9 +46,24 @@ function getAllTweets(){
 	//Initializing required variable for wokring with timeline
 	$max_id=$since_id=0;
 	$new_max_id=0;
-	
-	//Fetching tweets from user
-	$val=$connection->get('statuses/user_timeline',array('include_rts' => 'true','count' => 200, 'screen_name' => encryptDecrypt('decrypt',$_GET['j'])));
+	if($cache === FALSE) {
+		//Fetching tweets from user
+		$val=$connection->get('statuses/user_timeline',array('include_rts' => 'true','count' => 200, 'screen_name' => encryptDecrypt('decrypt',$_GET['j'])));
+		
+		//Let's save our data into the cache
+		$fp = fopen($cPath, 'w');
+		if(flock($fp, LOCK_EX)) {
+			fwrite($fp, json_encode($val));
+			flock($fp, LOCK_UN);
+		}
+		fclose($fp);
+	}else {
+		//echo "<br />Used Cached version<br />";
+	    //cache is TRUE let's load the data from the cache.
+	    $val = file_get_contents($cPath);
+		//Decoding
+		$val=json_decode($val);
+	}	
 	
 	//Getting Largest ID
 	$since_id=$val[0]->id;
