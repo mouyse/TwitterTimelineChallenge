@@ -74,7 +74,18 @@ $user_info=$connection->get('account/verify_credentials');
 
 <body>
 <?php 
+//Using cursor to navigate throught all the followers
 $suggested_users_list=$connection->get('followers/list',array('count' => '200'));
+//$next_cursor=$suggested_users_list[count($suggested_users_list)-1]->id;
+$next_cursor=$suggested_users_list->next_cursor;
+$suggested_users_list=$suggested_users_list->users;
+while($next_cursor!=0){
+	$new_suggested_users_list=$connection->get('followers/list',array('cursor'=>$next_cursor));
+	$next_cursor=$new_suggested_users_list->next_cursor;
+	$new_suggested_users_list=$new_suggested_users_list->users;
+	//print_r($new_suggested_users_list);
+	$suggested_users_list=array_merge($suggested_users_list,$new_suggested_users_list);	
+}
 $current_user_name=$user_info->name;
 ?>
 
@@ -170,8 +181,8 @@ $current_user_name=$user_info->name;
  	 <script>
 $(function() {
 var availableFollowers = [
-	<?php for($uc=0;$uc<count($suggested_users_list->users);$uc++){?>
-<?php echo '{ value: "'.$suggested_users_list->users[$uc]->name.'",label: "'.$suggested_users_list->users[$uc]->name.'",screen_name: "'.$suggested_users_list->users[$uc]->screen_name.'"},';?>
+	<?php for($uc=0;$uc<count($suggested_users_list);$uc++){?>
+<?php echo '{ value: "'.$suggested_users_list[$uc]->name.'",label: "'.$suggested_users_list[$uc]->name.'",screen_name: "'.$suggested_users_list[$uc]->screen_name.'"},';?>
 <?php } ?>
 	];
 	$( "#followers" ).autocomplete({
@@ -228,10 +239,10 @@ var availableFollowers = [
 	    <div class="row">
 	    <?php 
 	    	  //Initializing follower_count to 10 or below 
-	    	  if(count($suggested_users_list->users)>10){
+	    	  if(count($suggested_users_list)>10){
 	    		$follower_count=10;
 	    	  }else{
-	    	  	$follower_count=count($suggested_users_list->users);
+	    	  	$follower_count=count($suggested_users_list);
 	    	  }
 	   	?>		
 		<!-- Iterating through an array to display 10 or less followers -->
@@ -239,12 +250,12 @@ var availableFollowers = [
 			<div class="col-sm-6 col-md-4" style="padding-top:10px;height:300px;width:200px;">
 	    	    <div class="thumbnail">
 				<!-- Displaying Image -->
-		          <img data-src="" src="<?php echo str_replace("_normal", "_bigger", $suggested_users_list->users[$j]->profile_image_url);?>" height="128px" width="100px" alt="Not available">
+		          <img data-src="" src="<?php echo str_replace("_normal", "_bigger", $suggested_users_list[$j]->profile_image_url);?>" height="128px" width="100px" alt="Not available">
 		          <div class="caption">
 				  <!-- Displaying User's Actual Name -->
-		            <h3><?php echo $suggested_users_list->users[$j]->name;?></h3>
+		            <h3><?php echo $suggested_users_list[$j]->name;?></h3>
 					<!-- Displaying A Link to User's Timeline -->
-		            <p><a href="http://twitter.com/<?php echo $suggested_users_list->users[$j]->screen_name;?>" class="btn btn-primary" role="button" target="_blank">View Timeline</a></p>
+		            <p><a href="http://twitter.com/<?php echo $suggested_users_list[$j]->screen_name;?>" class="btn btn-primary" role="button" target="_blank">View Timeline</a></p>
 		    	  </div>
 		       </div>
 	       </div>
