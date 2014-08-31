@@ -9,6 +9,9 @@ Twitter Timeline Challenge
   * XML
   * Google Spreadsheet
 * You can also mail PDF Version of your all tweets to Any Email ID. 
+* Using the CONCEPT of (140Dev)[http://140dev.com/] Framework, I've also created Database cache to keep your frustration of "rate limit excceded" far away.
+* Database cache keep tracks of followers and tweets only.
+* Interval timing has been defined in "tweeterappconfig.php" file which is in minute format.
 
 Demo link:
 

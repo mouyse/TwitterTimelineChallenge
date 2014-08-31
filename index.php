@@ -22,8 +22,8 @@ $connection=new TwitterOAuth(consumer, consumer_secret,$access_token['oauth_toke
 //Making an API Call to fetch Home Timeline of currently logged in user
 $home_timeline=$connection->get('statuses/home_timeline',array('include_rts' => 'true'));
 
-//Making an API Call to fetch Account information of Currently logged in user
-$user_info=$connection->get('account/verify_credentials');
+//Getting Account Information
+$user_info=getAccountInformation();
 
 ?>
 <!DOCTYPE html>
@@ -74,6 +74,18 @@ $user_info=$connection->get('account/verify_credentials');
 
 <body>
 <?php 
+$suggested_users_list=getFollowersList($user_info);
+$current_user_name=$user_info->name;
+/*if(isset($suggested_users_list[0]['raw_follower'])){
+	$new_list=array();
+	for($cnt=0;$cnt<count($suggested_users_list);$cnt++){
+		$new_list[$cnt]=unserialize(base64_decode($suggested_users_list[$cnt]['raw_follower']));
+	}	
+	$suggested_users_list=$new_list;
+}*/
+//echo "<pre>";print_r($suggested_users_list);echo "</pre>";exit();
+//echo "<pre>";print_r(unserialize(base64_decode($suggested_users_list[0]['raw_follower'])));echo "</pre>";exit();
+/*
 //Using cursor to navigate throught all the followers
 $suggested_users_list=$connection->get('followers/list',array('count' => '200'));
 //$next_cursor=$suggested_users_list[count($suggested_users_list)-1]->id;
@@ -86,7 +98,11 @@ while($next_cursor!=0){
 	//print_r($new_suggested_users_list);
 	$suggested_users_list=array_merge($suggested_users_list,$new_suggested_users_list);	
 }
-$current_user_name=$user_info->name;
+//echo "<pre>";
+//print_r($suggested_users_list);
+//echo "</pre>";
+//exit();
+*/
 ?>
 
 <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">

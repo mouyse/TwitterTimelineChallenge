@@ -40,7 +40,7 @@ if(isset($_POST['selected_follower'])){
 	****************************/
 	
 	//Calling a function to get all tweets
-	$val=getAllTweets();
+	$val=getTweetList($_SESSION['user_info']);
 	
 	// Include the main TCPDF library (search for installation path).
 	
@@ -112,7 +112,7 @@ if(isset($_POST['selected_follower'])){
 	$pdf->lastPage();
 	
 	// ---------------------------------------------------------
-	
+	ob_end_clean();
 	//Close and output PDF document
 	$pdf->Output(ucfirst(encryptDecrypt('decrypt',$_GET['p'])).'.pdf', 'I');	
 	
@@ -123,7 +123,7 @@ if(isset($_POST['selected_follower'])){
 	 ****************************/
 	
 	//Calling a function to get all tweets
-	$val=getAllTweets();
+	$val=getTweetList($_SESSION['user_info']);
 	
 	//Setting up a header for JSON file
 	header('Content-disposition: attachment; filename='.encryptDecrypt('decrypt',$_GET['j']).'.json');
@@ -143,7 +143,7 @@ if(isset($_POST['selected_follower'])){
 	****************************/
 	
 	//Calling a function to get all tweets
-	$val=getAllTweets();
+	$val=getTweetList($_SESSION['user_info']);
 	
 	//Setting up a headers for CSV file
 	header('Content-Type: text/csv; charset=utf-8');
@@ -169,10 +169,11 @@ if(isset($_POST['selected_follower'])){
 	
 	/** Include PHPExcel */
 	require_once 'lib/PHPExcel179/Classes/PHPExcel.php';
-	
 	//Calling a function to get all tweets
-	$val=getAllTweets();
-	
+	$val=getTweetList($_SESSION['user_info']);//New Way to get Content
+	//echo "Using New";
+	//$val=getAllTweets();//Old way to get content
+	//echo "<pre>";print_r($val);echo "</pre>";exit();
 	// Create new PHPExcel object
 	$objPHPExcel = new PHPExcel();
 	
@@ -200,7 +201,7 @@ if(isset($_POST['selected_follower'])){
 		$new_val[$ATXcounter][0]=$val[$ATXcounter]->created_at;
 		$new_val[$ATXcounter][1]=$val[$ATXcounter]->text;
 	}
-	
+	//echo "<pre>";print_r($new_val);exit();
 	//Transfering Array to Excel Sheet from Second Row "A2" just because we've already used First row for our headers
 	$objPHPExcel->getActiveSheet()->fromArray($new_val, null, 'A2');
 	
@@ -213,22 +214,24 @@ if(isset($_POST['selected_follower'])){
 	// Set active sheet index to the first sheet, so Excel opens this as the first sheet
 	$objPHPExcel->setActiveSheetIndex(0);
 	
-	
+	ob_end_clean();
 	// Redirect output to a client’s web browser (Excel5)
 	header('Content-Type: application/vnd.ms-excel');
 	header('Content-Disposition: attachment;filename='.encryptDecrypt('decrypt', $_GET['e']).'.xls');
-	header('Cache-Control: max-age=0');
+	//header('Cache-Control: max-age=0');
 	// If you're serving to IE 9, then the following may be needed
-	header('Cache-Control: max-age=1');
+	//header('Cache-Control: max-age=1');
 	
 	// If you're serving to IE over SSL, then the following may be needed
 	header ('Expires: Mon, 26 Jul 1997 05:00:00 GMT'); // Date in the past
 	header ('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT'); // always modified
-	header ('Cache-Control: cache, must-revalidate'); // HTTP/1.1
+	//header ('Cache-Control: cache, must-revalidate'); // HTTP/1.1
 	header ('Pragma: public'); // HTTP/1.0
 	
 	$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
 	$objWriter->save('php://output');
+	ob_flush();
+	//$objWriter->save(str_replace(__FILE__,encryptDecrypt('decrypt', $_GET['e']).'.xls',__FILE__));
 	exit;
 	
 }else if(isset($_GET['x'])){
@@ -238,7 +241,7 @@ if(isset($_POST['selected_follower'])){
 	****************************/
 	
 	//Calling a function to get all tweets
-	$val=getAllTweets();
+	$val=getTweetList($_SESSION['user_info']);
 
 	//Setting up a header for XML file
 	header("Content-Type: application/force-download; name=\"test.xml");
@@ -307,7 +310,7 @@ if(isset($_POST['selected_follower'])){
 			****************************/
 			
 			//Calling a function to get all tweets
-			$val=getAllTweets();
+			$val=getTweetList($_SESSION['user_info']);
 			
 			$file = fopen('GoogleSpreadsheetUploads/uploads.csv', 'w');			
 			
@@ -361,7 +364,7 @@ if(isset($_POST['selected_follower'])){
 	 *	  PDF FILE CREATION    *
 	****************************/
 	//Calling a function to get all tweets
-	$val=getAllTweets();
+	$val=getTweetList($_SESSION['user_info']);
 	
 	// Include the main TCPDF library (search for installation path).	
 	require_once('lib/tcpdf/examples/tcpdf_include.php');
