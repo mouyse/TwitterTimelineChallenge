@@ -196,6 +196,7 @@ function getFollowersList($user_info){
 				
 		}
 		
+		//echo "<pre>";print_r($val);exit();
 		return $suggested_users_list;
 		//echo "<pre>";
 		////print_r($suggested_users_list);echo "</pre>";
@@ -316,7 +317,8 @@ function getAllTweets(){
 	
 	//Fetching tweets from user
 	$val=$connection->get('statuses/user_timeline',array('include_rts' => 'true','count' => 200, 'screen_name' => encryptDecrypt('decrypt',$_GET['j'])));
-	
+	//echo "<pre>";
+	//echo "<br />".print_r($val);
 	/*
 	if($cache === FALSE) {
 		
@@ -349,25 +351,53 @@ function getAllTweets(){
 	$since_id=$val[0]->id;
 	//Getting Smallest ID
 	$max_id=$val[count($val)-1]->id;
-	
-	while(true){
+	//echo "<pre>";
+//	//echo "<br /> Since ID: ".$since_id;
+	//echo "<br /> Max ID: ".$max_id;
+	//echo "<br />count: ".count($val);
+	//exit();
+	if(count($val)==199){
+		
+		while(true){
+				
+			//Getting old tweets containing ids lesser then max_id
+			$new_var=$connection->get('statuses/user_timeline',array('include_rts' => 'true','count' => 200,'max_id' => $max_id, 'screen_name' => encryptDecrypt('decrypt',$_GET['j'])));
+			$new_max_id=$new_var[count($new_var)-1]->id;
+		
+			//echo "<br />";
+			//echo "<br /> New Max ID: ".$new_max_id;
+			//echo "<br />";
+		
+			//print_r($new_var);
+			//exit();
+			//Comparing new_max_id with max_id to see whether we've reached at the end or not
+			if($new_max_id==$max_id || $new_max_id=='' || $new_max_id==null){
+				break;
+			}else{
+				//Decreasing new max_id by 1 Because of redundancy of Last tweet
+				$max_id=$new_max_id-1;
+			}
 			
-		//Getting old tweets containing ids lesser then max_id
-		$new_var=$connection->get('statuses/user_timeline',array('include_rts' => 'true','count' => 200,'max_id' => $max_id, 'screen_name' => encryptDecrypt('decrypt',$_GET['j'])));
-		$new_max_id=$new_var[count($new_var)-1]->id;
-	
-		//Comparing new_max_id with max_id to see whether we've reached at the end or not
-		if($new_max_id==$max_id){
-			break;
-		}else{
-			//Decreasing new max_id by 1 Because of redundancy of Last tweet
-			$max_id=$new_max_id-1;
+			/*$new_var=$connection->get('statuses/user_timeline',array('include_rts' => 'true','count' => 200,'max_id' => $max_id, 'screen_name' => encryptDecrypt('decrypt',$_GET['j'])));
+			$new_max_id=$new_var[count($new_var)-1]->id;
+			
+			echo "<br />";
+			echo "<br /> New Max ID: ".$new_max_id;
+			echo "<br />";
+			
+			print_r($new_var);
+			exit();*/
+			//Merging two arrays
+			$val=array_merge($val,$new_var);
+		
+			//echo "<br /> Since ID: ".$since_id;
+		
 		}
+		
+	}	
+	//echo "From Function<pre>";
+	//print_r($val);exit();
 	
-		//Merging two arrays
-		$val=array_merge($val,$new_var);
-	
-	}
 	return $val;
 }
 function getAllFollowers(){
