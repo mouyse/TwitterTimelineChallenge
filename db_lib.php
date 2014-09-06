@@ -13,12 +13,15 @@ class db
 	public $dbh;
 	public $error;	
 	public $error_msg;
-
+	
 	// Create a database connection for use by all functions in this class
 	function __construct() {
 
 		require_once('db_config.php');
-
+		$db_host=DB_HOST;
+		$db_user=DB_USER;
+		$db_password=DB_PASSWORD;
+		$db_name=DB_NAME;
 		if($this->dbh = mysqli_connect($db_host,
 				$db_user, $db_password, $db_name)) {
 
@@ -106,5 +109,8 @@ class db
 		mysqli_query($this->dbh,$query);
 		$this->error_test('update',$query);
 	}
+	public function close(){
+		mysqli_close($this->dbh);
+	}	
 }
 ?>

@@ -1,4 +1,7 @@
 <?php
+// on the beginning of your script save original memory limit
+//$original_mem = ini_get('memory_limit');
+// then set it to the value you think you need (experiment)
 require_once 'db_lib.php';
 require_once 'twitterappconfig.php';
 function getAccountInformation(){
@@ -72,7 +75,7 @@ function getTweetList($user_info){
 			$oDB->insert('json_cache', $field_values);
 	
 		}
-	
+		$oDB->close();
 		return $val;
 		//echo "<pre>";
 		////print_r($suggested_users_list);echo "</pre>";
@@ -98,11 +101,12 @@ function getTweetList($user_info){
 			//				$row=mysqli_fetch_array($result);
 	
 			$cnt=0;
+			$ret_row="";
 			while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
 				$ret_row[$cnt]=unserialize(base64_decode($row['raw_tweet']));
 				$cnt++;
 			}
-	
+			$oDB->close();
 			//Returning it in a proper usable format
 			return $ret_row;
 	
@@ -136,7 +140,12 @@ function getTweetList($user_info){
 				$oDB->insert('json_cache', $field_values);
 					
 			}
-	
+			
+			$field_values='';
+			$field_values='last_update="'.date('Y-m-d H:i:s').'"';
+			$where_clause='user_id="'.$user_info->id.'"';
+			$oDB->update('registered_users',$field_values,$where_clause);
+			$oDB->close();
 			return $val;
 				
 		}
@@ -196,6 +205,7 @@ function getFollowersList($user_info){
 				
 		}
 		
+		$oDB->close();
 		//echo "<pre>";print_r($val);exit();
 		return $suggested_users_list;
 		//echo "<pre>";
@@ -222,11 +232,12 @@ function getFollowersList($user_info){
 //				$row=mysqli_fetch_array($result);
 				
 				$cnt=0;
+				$ret_row="";
 				while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
 					$ret_row[$cnt]=unserialize(base64_decode($row['raw_follower']));
 					$cnt++;
 				}
-				
+				$oDB->close();
 				//Returning it in a proper usable format
 				return $ret_row;
 				
@@ -260,7 +271,12 @@ function getFollowersList($user_info){
 				$oDB->insert('json_cache', $field_values);
 					
 			}
-						
+			
+			$field_values='';
+			$field_values='last_update="'.date('Y-m-d H:i:s').'"';
+			$where_clause='user_id="'.$user_info->id.'"';
+			$oDB->update('registered_users',$field_values,$where_clause);
+			$oDB->close();
 			return $suggested_users_list;
 			
 		}
@@ -306,11 +322,7 @@ function getAllTweets(){
 	*/
 	
 	// Follow this like for better understanding:  https://dev.twitter.com/docs/working-with-timelines
-	//Fetching tweets from user
-	
-	//Initializing required variable for wokring with timeline
-	$max_id=$since_id=0;
-	$new_max_id=0;
+	//Fetching tweets from user	
 	
 	$access_token=$_SESSION['access_token'];
 	$connection=new TwitterOAuth(consumer, consumer_secret,$access_token['oauth_token'],$access_token['oauth_token_secret']);
@@ -356,7 +368,7 @@ function getAllTweets(){
 	//echo "<br /> Max ID: ".$max_id;
 	//echo "<br />count: ".count($val);
 	//exit();
-	if(count($val)==199){
+	if(count($val)==200 || count($val)==199){
 		
 		while(true){
 				
@@ -393,6 +405,11 @@ function getAllTweets(){
 			//echo "<br /> Since ID: ".$since_id;
 		
 		}
+		
+		$new_var=$connection->get('statuses/user_timeline',array('include_rts' => 'true','count' => 200,'since_id' => $since_id, 'screen_name' => encryptDecrypt('decrypt',$_GET['j'])));
+		$new_max_id=$new_var[count($new_var)-1]->id;
+		
+		$val=array_merge($val,$new_var);
 		
 	}	
 	//echo "From Function<pre>";

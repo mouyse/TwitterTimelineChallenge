@@ -1,8 +1,13 @@
 <?php
 session_start();
 ob_start();
-error_reporting(0);
-@ini_set('display_errors', 0);
+error_reporting(1);
+@ini_set('display_errors', 1);
+// on the beginning of your script save original memory limit
+//$original_mem = ini_get('memory_limit');
+// then set it to the value you think you need (experiment)
+ini_set('max_execution_time', 100);
+
 // Include the main TCPDF library (search for installation path).
 require_once('lib/tcpdf/tcpdf.php');
 require_once('lib/tcpdf/examples/tcpdf_include.php');
@@ -35,6 +40,7 @@ if(isset($_POST['selected_follower'])){
 	
 }else if(isset($_GET['p'])){
 		
+	echo "<img src='img/loader.gif' /><br />";
 	/****************************
 	 *	  PDF FILE CREATION    *
 	****************************/
@@ -42,22 +48,22 @@ if(isset($_POST['selected_follower'])){
 	//Calling a function to get all tweets
 	$val=getTweetList($_SESSION['user_info']);
 	
-	// Include the main TCPDF library (search for installation path).
-	
-	require_once('lib/tcpdf/examples/tcpdf_include.php');
-	require_once('lib/tcpdf/tcpdf.php');	
+	//print_r($val[0]);
 	// create new PDF document
 	$pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
 	
 	// set document information
 	//$pdf->SetCreator(PDF_CREATOR);
 	$pdf->SetAuthor('Jay Shah');
-	$pdf->SetTitle('All Tweets of '.ucfirst(encryptDecrypt('decrypt',$_GET['p'])));
+	
+	$name=encryptDecrypt('decrypt',$_GET['p']);
+	$pdf->SetTitle('All Tweets of '.ucfirst($name));
 	//$pdf->SetSubject('TCPDF Tutorial');
 	//$pdf->SetKeywords('TCPDF, PDF, example, test, guide');
 	
 	// set default header data
-	$pdf->SetHeaderData(PDF_HEADER_LOGO, PDF_HEADER_LOGO_WIDTH, ucfirst(encryptDecrypt('decrypt', $_GET['p']))."'s All Tweets", "by: Jay Shah");
+	$name=encryptDecrypt('decrypt', $_GET['p']);
+	$pdf->SetHeaderData(PDF_HEADER_LOGO, PDF_HEADER_LOGO_WIDTH, ucfirst($name)."'s All Tweets", "by: Jay Shah");
 	
 	// set header and footer fonts
 	$pdf->setHeaderFont(Array(PDF_FONT_NAME_MAIN, '', PDF_FONT_SIZE_MAIN));
@@ -87,34 +93,81 @@ if(isset($_POST['selected_follower'])){
 	$pdf->AddPage();
 	
 	// create some HTML content
-	$html='<table>';
-	$html.='<tr>';
-	$html.='<th>When did you tweet ? </th>';
-	$html.='<th>What did you tweet ? </th>';
+	$header='';
+	$header='<table>';
+	$header.='<tr>';
+	$header.='<th>What did you tweet ? &nbsp;&nbsp;&nbsp;&nbsp; & &nbsp;&nbsp;&nbsp;&nbsp; When did you tweet ?</th>';
+	//$header.='<th>When did you tweet ? </th>';
 	//$html.='<th>How many retweeted ? </th>';
 	//$html.='<th>How many marked it as Favorite ? </th>';
-	$html.='</tr>';
-	for($tweets_counter=0;$tweets_counter<count($val);$tweets_counter++){
-		$html.="<tr>";
-		$html.="<td>".$val[$tweets_counter]->created_at."</td>";
-		$html.="<td>".$val[$tweets_counter]->text."</td>";
-		//$html.="<td align='right'>".(empty($val[$tweets_counter]->retweeted))?'You got duck number of retweets for this tweet. :D ':$val[$tweets_counter]->retweet."</td>";
-		//$html.="<td align='right'>".(empty($val[$tweets_counter]->favorited))?'Oops! Looks like no one has favorited this tweet.':$val[$tweets_counter]->favorited."</td>";
-		$html.="</tr>";
-	}
-	$html.='</table>';
+	$header.='</tr>';
 	
 	// output the HTML content
-	$pdf->writeHTML($html, true, false, true, false, '');
+	$pdf->writeHTML($header, true, false, true, false, '');
 	
+	require_once 'db_lib.php';
+	$oDB=new db();
+	//$fp = fopen('db_logs.txt','a');
+	
+	for($tweets_counter=0;$tweets_counter<count($val);$tweets_counter++){
+	
+		echo "<br />Processing ".($tweets_counter+1)." of ".count($val)." Tweets... ";		
+		$body='';		
+		$body="<tr>";
+		
+		// output the HTML content
+		$pdf->writeHTML($body, true, false, true, false, '');
+		
+		//$body.="<td style='color:#333333;'><span style='color:#333333;'>".$val[$tweets_counter]->text."</span> At <span style='color:#3071A9;'>".$val[$tweets_counter]->created_at."</span></td>";
+		//$body.="<td>".$val[$tweets_counter]->text."</td>";
+		$body="<th>".$val[$tweets_counter]->text."</th>";
+		
+		// output the HTML content
+		$pdf->writeHTML($body, true, false, true, false, '');
+		
+		$body="<th>".$val[$tweets_counter]->created_at."</th>";
+		
+		
+		// output the HTML content
+		$pdf->writeHTML($body, true, false, true, false, '');
+		
+		//fwrite($fp, date(DATE_RFC822) . ' | ' .
+			//	$_SERVER["SCRIPT_NAME"] . ' -> Tweet ID: ' . $val[$tweets_counter]->id .
+				//' | Loop ID: '.$tweets_counter.' | '. $val[$tweets_counter]->text . "\n");
+		
+		$body="</tr>";
+		
+		// output the HTML content
+		$pdf->writeHTML($body, true, false, true, false, '');
+	}
+	
+	$footer='';
+	$footer.='</table>';
+	
+	//fwrite($fp, date(DATE_RFC822) . ' | ' .
+			//$_SERVER["SCRIPT_NAME"] . ' -> Started writing html  "\n"');
+	
+	// output the HTML content
+	$pdf->writeHTML($footer, true, false, true, false, '');
+	
+	
+	//fwrite($fp, date(DATE_RFC822) . ' | ' .
+		//	$_SERVER["SCRIPT_NAME"] . ' -> Finished writing html  "\n"');
 	
 	// reset pointer to the last page
 	$pdf->lastPage();
 	
+	//fclose($fp);
 	// ---------------------------------------------------------
 	ob_end_clean();
 	//Close and output PDF document
-	$pdf->Output(ucfirst(encryptDecrypt('decrypt',$_GET['p'])).'.pdf', 'I');	
+	
+	$name=encryptDecrypt('decrypt',$_GET['p']);
+	
+	$pdf->Output($name.'.pdf', 'I');
+	
+	echo "<script>window.close();</script>";
+	exit();
 	
 }else if(isset($_GET['j'])){
 	
@@ -319,7 +372,7 @@ if(isset($_POST['selected_follower'])){
 			
 			//Iterating through an array "$var" to write all tweets row by row
 			for($csv_counter=0;$csv_counter<count($val);$csv_counter++){
-				echo "<br />Processing ".($tweets_counter+1)." of ".count($val)." Tweets... ";
+				echo "<br />Processing ".($csv_counter+1)." of ".count($val)." Tweets... ";
 				fputcsv($file, array($val[$csv_counter]->created_at,$val[$csv_counter]->text),",");
 			}
 			
@@ -375,10 +428,12 @@ if(isset($_POST['selected_follower'])){
 	
 	// set document information
 	$pdf->SetAuthor('Jay Shah');
-	$pdf->SetTitle('All Tweets of '.ucfirst(encryptDecrypt('decrypt',$_GET['p'])));
+	$name=encryptDecrypt('decrypt',$_GET['p']);
+	$pdf->SetTitle('All Tweets of '.ucfirst($name));
 	
 	// set default header data
-	$pdf->SetHeaderData(PDF_HEADER_LOGO, PDF_HEADER_LOGO_WIDTH, ucfirst(encryptDecrypt('decrypt', $_GET['p']))."'s All Tweets", "by: Jay Shah");
+	$name=encryptDecrypt('decrypt', $_GET['p']);
+	$pdf->SetHeaderData(PDF_HEADER_LOGO, PDF_HEADER_LOGO_WIDTH, ucfirst($name)."'s All Tweets", "by: Jay Shah");
 	
 	// set header and footer fonts
 	$pdf->setHeaderFont(Array(PDF_FONT_NAME_MAIN, '', PDF_FONT_SIZE_MAIN));
@@ -408,26 +463,48 @@ if(isset($_POST['selected_follower'])){
 	$pdf->AddPage();
 	
 	// create some HTML content
-	$html='<table>';
-	$html.='<tr>';
-	$html.='<th>When did you tweet ? </th>';
-	$html.='<th>What did you tweet ? </th>';
+	$header='';
+	$header='<table>';
+	$header.='<tr>';
+	$header.='<th>What did you tweet ? </th>';
+	$header.='<th>When did you tweet ? </th>';
 	//$html.='<th>How many retweeted ? </th>';
 	//$html.='<th>How many marked it as Favorite ? </th>';
-	$html.='</tr>';
-	for($tweets_counter=0;$tweets_counter<count($val);$tweets_counter++){
-		echo "<br />Processing ".($tweets_counter+1)." of ".count($val)." Tweets... ";
-		$html.="<tr>";
-		$html.="<td>".$val[$tweets_counter]->created_at."</td>";
-		$html.="<td>".$val[$tweets_counter]->text."</td>";
-		//$html.="<td align='right'>".(empty($val[$tweets_counter]->retweeted))?'You got duck number of retweets for this tweet. :D ':$val[$tweets_counter]->retweet."</td>";
-		//$html.="<td align='right'>".(empty($val[$tweets_counter]->favorited))?'Oops! Looks like no one has favorited this tweet.':$val[$tweets_counter]->favorited."</td>";
-		$html.="</tr>";
-	}
-	$html.='</table>';
+	$header.='</tr>';
 	
 	// output the HTML content
-	$pdf->writeHTML($html, true, false, true, false, '');
+	$pdf->writeHTML($header, true, false, true, false, '');
+	
+	require_once 'db_lib.php';
+	$oDB=new db();
+	$fp = fopen('db_logs.txt','a');
+	
+	for($tweets_counter=0;$tweets_counter<count($val);$tweets_counter++){
+	
+		echo "<br />Processing ".($tweets_counter+1)." of ".count($val)." Tweets... ";		
+		$body='';		
+		$body.="<tr>";
+		//$body.="<td style='color:#333333;'><span style='color:#333333;'>".$val[$tweets_counter]->text."</span> At <span style='color:#3071A9;'>".$val[$tweets_counter]->created_at."</span></td>";
+		//$body.="<td>".$val[$tweets_counter]->text."</td>";
+		$body.="<th>".$val[$tweets_counter]->text."</th>";
+		$body.="<th>".$val[$tweets_counter]->created_at."</th>";
+		
+		fwrite($fp, date(DATE_RFC822) . ' | ' .
+				$_SERVER["SCRIPT_NAME"] . ' -> Tweet ID: ' . $val[$tweets_counter]->id .
+				' | Loop ID: '.$tweets_counter.' | '. $val[$tweets_counter]->text . "\n");
+		
+		$body.="</tr>";
+		
+		// output the HTML content
+		$pdf->writeHTML($body, true, false, true, false, '');
+	}
+	
+	$footer='';
+	$footer.='</table>';
+	
+	
+	// output the HTML content
+	$pdf->writeHTML($footer, true, false, true, false, '');
 	
 	
 	// reset pointer to the last page
