@@ -16,11 +16,9 @@ tools:
     php_cpd:
         enabled: true
         excluded_dirs: [vendor, tests]
-script: 
-    phpunit --coverage-clover=coverage.clover
 build:
     environment:
-            php: '5.5.11'
+            php: '5.5.12'
     tests:
         override:
             -
