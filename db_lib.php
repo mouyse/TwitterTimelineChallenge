@@ -112,5 +112,8 @@ class db
 	public function close(){
 		mysqli_close($this->dbh);
 	}	
+	public function dbUnitTest(){
+		return "Hello PHPUnit";
+	}
 }
 ?>

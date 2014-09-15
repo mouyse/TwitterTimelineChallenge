@@ -4,6 +4,9 @@
 // then set it to the value you think you need (experiment)
 require_once 'db_lib.php';
 require_once 'twitterappconfig.php';
+function foo(){
+	return "Hello PHPUnit";
+}
 function getAccountInformation(){
 	
 	if(isset($_SESSION['account_verify_credentials'])){
