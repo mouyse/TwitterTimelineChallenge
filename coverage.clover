@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1410768512">
-  <project timestamp="1410768512">
+<coverage generated="1410772038">
+  <project timestamp="1410772038">
     <file name="E:\xampp\htdocs\TwitterTimelineChallenge/db_lib.php">
       <class name="db" namespace="global">
         <metrics methods="11" coveredmethods="0" conditionals="0" coveredconditionals="0" statements="52" coveredstatements="0" elements="63" coveredelements="0"/>

@@ -9,8 +9,21 @@ php ocular.phar code-coverage:upload --access-token="your-token" --format=php-cl
 ocular code-coverage:upload --access-token="cdf0b0b1f2a15a75c6be94c5a74625e73df1af4a40fd885e42d3dfe8016ac770" --format=php-clover coverage.clover
 
 
+ocular code-coverage:upload --access-token="cdf0b0b1f2a15a75c6be94c5a74625e73df1af4a40fd885e42d3dfe8016ac770" --format=php-clover --repository="mouyse/TwitterTimelineChallenge" --revision="FirstCloverUpload" coverage.clover
+
 ocular code-coverage:upload --access-token="cdf0b0b1f2a15a75c6be94c5a74625e73df1af4a40fd885e42d3dfe8016ac770" --format=php-clover coverage.clover --repository="mouyse/TwitterTimelineChallenge" --revision="FirstCloverUpload"
+
+ocular code-coverage:upload --api-url="https://scrutinizer-ci.com/ocular.phar" --access-token="cdf0b0b1f2a15a75c6be94c5a74625e73df1af4a40fd885e42d3dfe8016ac770" --format=php-clover --repository="mouyse/TwitterTimelineChallenge" --revision="FirstCloverUpload" coverage.clover
+
+
+php ocular.phar code-coverage:upload --api-url="https://scrutinizer-ci.com/ocular.phar" --access-token="cdf0b0b1f2a15a75c6be94c5a74625e73df1af4a40fd885e42d3dfe8016ac770" --format=php-clover --repository="mouyse/TwitterTimelineChallenge" --revision="FirstCloverUpload" coverage.clover
+
+ocular code-coverage:upload --access-token="cdf0b0b1f2a15a75c6be94c5a74625e73df1af4a40fd885e42d3dfe8016ac770" --format=php-clover --repository="mouyse/TwitterTimelineChallenge" --revision="FirstCloverUpload" coverage.clover
+
 
 
 code-coverage:upload [--api-url="..."] [--repository="..."] [--revision="..."] [
 --format="..."] [--parent="..."] coverage-file
+
+https://scrutinizer-ci.com/g/mouyse/TwitterTimelineChallenge/
+ocular code-coverage:upload --api-url="https://scrutinizer-ci.com/g/mouyse/TwitterTimelineChallenge/" --access-token="cdf0b0b1f2a15a75c6be94c5a74625e73df1af4a40fd885e42d3dfe8016ac770" --format=php-clover --repository="mouyse/TwitterTimelineChallenge" --revision="FirstCloverUpload" coverage.clover
