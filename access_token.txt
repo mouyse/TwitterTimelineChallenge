@@ -13,10 +13,10 @@ ocular code-coverage:upload --access-token="cdf0b0b1f2a15a75c6be94c5a74625e73df1
 
 ocular code-coverage:upload --access-token="cdf0b0b1f2a15a75c6be94c5a74625e73df1af4a40fd885e42d3dfe8016ac770" --format=php-clover coverage.clover --repository="mouyse/TwitterTimelineChallenge" --revision="FirstCloverUpload"
 
-ocular code-coverage:upload --api-url="https://scrutinizer-ci.com/ocular.phar" --access-token="cdf0b0b1f2a15a75c6be94c5a74625e73df1af4a40fd885e42d3dfe8016ac770" --format=php-clover --repository="mouyse/TwitterTimelineChallenge" --revision="FirstCloverUpload" coverage.clover
+ocular code-coverage:upload --api-url="https://scrutinizer-ci.com/ocular.phar" --access-token="cdf0b0b1f2a15a75c6be94c5a74625e73df1af4a40fd885e42d3dfe8016ac770" --format=php-clover --repository="mouyse/TwitterTimelineChallenge" coverage.clover
 
 
-php ocular.phar code-coverage:upload --api-url="https://scrutinizer-ci.com/ocular.phar" --access-token="cdf0b0b1f2a15a75c6be94c5a74625e73df1af4a40fd885e42d3dfe8016ac770" --format=php-clover --repository="mouyse/TwitterTimelineChallenge" --revision="FirstCloverUpload" coverage.clover
+ 
 
 ocular code-coverage:upload --access-token="cdf0b0b1f2a15a75c6be94c5a74625e73df1af4a40fd885e42d3dfe8016ac770" --format=php-clover --repository="mouyse/TwitterTimelineChallenge" --revision="FirstCloverUpload" coverage.clover
 
@@ -27,3 +27,95 @@ code-coverage:upload [--api-url="..."] [--repository="..."] [--revision="..."] [
 
 https://scrutinizer-ci.com/g/mouyse/TwitterTimelineChallenge/
 ocular code-coverage:upload --api-url="https://scrutinizer-ci.com/g/mouyse/TwitterTimelineChallenge/" --access-token="cdf0b0b1f2a15a75c6be94c5a74625e73df1af4a40fd885e42d3dfe8016ac770" --format=php-clover --repository="mouyse/TwitterTimelineChallenge" --revision="FirstCloverUpload" coverage.clover
+
+
+Hello Sir,
+
+Below are the steps which i've performed so far:
+
+Step 1: Installed xDebug, Composer, PHPUnit.
+
+Step 2: Updated Composer.
+
+Step 3: Upgraded PHPUnit from 3.7 to 4.2.
+
+Step 4: Created .scrutinizer.yml and composer.json and configured it with suitable options.
+
+Step 5: Configured phpunit.xml for Sample Testing,
+
+Step 6. Performed phpunit tests/SimpleTest.php on foo() method of required_funstions.php file just for the sake of initial testing.
+
+/***************************************************************************
+E:\xampp\htdocs\TwitterTimelineChallenge>phpunit tests/SimpleTest.php
+PHPUnit 4.2.6 by Sebastian Bergmann.
+
+Configuration read from E:\xampp\htdocs\TwitterTimelineChallenge\phpunit.xml
+
+..
+
+Time: 1.38 seconds, Memory: 3.75Mb
+
+OK (2 tests, 2 assertions)
+***************************************************************************/
+
+Step 7. Updated Github repository.
+
+Step 8: Executed
+
+phpunit --coverage-clover=coverage.clover
+
+Step 9. Downloaded ocular.phar
+
+Step 10. Installed ocular using composer.
+
+Step 11. Executed
+
+E:\xampp\htdocs\TwitterTimelineChallenge>ocular code-coverage:upload --api-url="
+https://scrutinizer-ci.com/ocular.phar" --access-token="cdf0b0b1f2a15a75c6be94c5
+a74625e73df1af4a40fd885e42d3dfe8016ac770" --format=php-clover --repository="mouy
+se/TwitterTimelineChallenge" --revision="FirstCloverUpload" coverage.clover
+
+#!/usr/bin/env php
+Uploading code coverage for repository "mouyse/TwitterTimelineChallenge" and rev
+ision "FirstCloverUpload"... Done
+
+Step 12. Finally, Scrutinizer keeps waiting to receive code average from PHPUnit. And It stops working by saying
+
+"The code coverage data was not received within the specified time. Please make sure your third-party service is configured to send code coverage data."
+
+Afterwards, I also contacted Thomas muller by sending him an email on support@scruitinizer.com
+
+Below is the conversation which i had had with him
+
+"
+
+Hello
+I've tried following command and it also gets success in uploading data. But when i run inspection it does not receive any code coverage. "ocular code-coverage:upload --api-url="https://scrutinizer-ci.com/ocular.phar" --access-token="cdf0b0b1f2a15a75c6be94c5a74625e73df1af4a40fd885e42d3dfe8016ac770" --format=php-clover --repository="mouyse/TwitterTimelineChallenge" --revision="FirstCloverUpload" coverage.clover"
+5h ago
+
+Is it the wrong way of sending code coverage from PHPUnit to Scrutinizer?
+
+If yes, instruct me with correct direction.
+5h ago
+
+This looks correct, what is the output of this command when you run it?
+
+Thomas
+2h ago
+
+As i said, "Uploading.... Done"
+2h ago
+
+You can see the inspection on my scrutinizer profile.
+2h ago
+
+It stops after "Test setup failed"
+2h ago
+
+This is the reply i get for previous command: Uploading code coverage for repository "mouyse/TwitterTimelineChallenge" and re
+ision "FirstCloverUpload"... Done
+2h ago
+
+Any suggestion?
+"
+
