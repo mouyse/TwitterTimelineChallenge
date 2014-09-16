@@ -15,13 +15,16 @@ tools:
 build:
     environment:
             php: '5.5.12'
-    tests:
+    dependencies:
+        # Runs before inferred commands
+        before:
+            - 'phpunit --coverage-clover=coverage.clover'            
+        # Overwrites inferred commands
         override:
-            -
-                command: vendor/bin/phpunit --coverage-clover=coverage.clover
-                coverage:
-                    file: coverage.clover
-                    format: php-clover
+            - 'php ocular.phar code-coverage:upload --api-url="https://scrutinizer-ci.com/ocular.phar" --access-token="cdf0b0b1f2a15a75c6be94c5a74625e73df1af4a40fd885e42d3dfe8016ac770" --format=php-clover --repository="mouyse/TwitterTimelineChallenge" coverage.clover '        
+    # tools:
+    #    php_code_coverage:
+     #       test_command: phpunit tests/SimpleTest.php
 checks:
     php:
         code_rating: true
