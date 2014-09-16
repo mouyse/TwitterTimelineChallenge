@@ -25,6 +25,16 @@ build:
     # tools:
     #    php_code_coverage:
      #       test_command: phpunit tests/SimpleTest.php
+    tests:
+        before:
+            -
+                command: 'phpunit tests/SimpleTest.php'
+        override:
+            -
+                command: vendor/bin/phpunit --coverage-clover=coverage.clover
+                coverage:
+                    file: coverage.clover
+                    format: php-clover
 checks:
     php:
         code_rating: true
