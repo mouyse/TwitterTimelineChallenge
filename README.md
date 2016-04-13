@@ -13,9 +13,6 @@ Twitter Timeline Challenge
 * Database cache keep tracks of followers and tweets only.
 * Interval timing has been defined in "tweeterappconfig.php" file which is in minute format.
 
-Demo link:
-
-[Twitter Timeline Challenge](http://shahinfosolutions.com/EW/TwitterTimelineChallenge/connect.php)
 
 Libraries used
 ---------------------------------------------
